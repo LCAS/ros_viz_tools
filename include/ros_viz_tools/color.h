@@ -1,14 +1,13 @@
-// Copyright (C) 2019 Wei Wang (wei.wang.bit@outlook.com)
-
 #ifndef ROS_VIZ_TOOLS_COLOR_H
 #define ROS_VIZ_TOOLS_COLOR_H
 
-#include <std_msgs/ColorRGBA.h>
+#include <std_msgs/msg/color_rgba.hpp>
 #include <vector>
+#include <math.h>
 
-namespace ros_viz_tools {
+namespace ros2_viz_tools {
 
-using std_msgs::ColorRGBA;
+using std_msgs::msg::ColorRGBA;
 
 ColorRGBA newColorRGBA(uint8_t red, uint8_t green, uint8_t blue, double alpha = 1.0);
 ColorRGBA newColorRGBADouble(double red, double green, double blue, double alpha = 1.0);
@@ -17,11 +16,11 @@ ColorRGBA newColorRGBADouble(double red, double green, double blue, double alpha
 const ColorRGBA WHITE      = newColorRGBA(255, 255, 255);
 const ColorRGBA BLACK      = newColorRGBA(  0,   0,   0);
 const ColorRGBA RED        = newColorRGBA(255,   0,   0);
-const ColorRGBA GREEN      = newColorRGBA(  0, 255,   0);
+const ColorRGBA GREEN_UP   = newColorRGBA(  0, 255,   0);
 const ColorRGBA BLUE       = newColorRGBA(  0,   0, 255);
-const ColorRGBA YELLOW     = newColorRGBA(255, 255,   0);
+const ColorRGBA YELLOW_UP  = newColorRGBA(255, 255,   0);
 const ColorRGBA CYAN       = newColorRGBA(  0, 255, 255);
-const ColorRGBA MAGENTA    = newColorRGBA(255,   0, 255);
+const ColorRGBA MAGENTA_UP = newColorRGBA(255,   0, 255);
 const ColorRGBA GRAY       = newColorRGBA(128, 128, 128);
 const ColorRGBA PURPLE     = newColorRGBA(128,   0, 128);
 const ColorRGBA PINK       = newColorRGBA(255, 192, 203);

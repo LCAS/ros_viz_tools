@@ -1,30 +1,31 @@
-// Copyright (C) 2019 Wei Wang (wei.wang.bit@outlook.com)
-
 #ifndef ROS_VIZ_TOOLS_H
 #define ROS_VIZ_TOOLS_H
 
 #include "ros_viz_tools/color.h"
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/color_rgba.hpp>
+#include <visualization_msgs/msg/marker.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
+#include <geometry_msgs/msg/pose.hpp>
+#include <tf2_geometry_msgs/tf2_geometry_msgs.hpp>
 
-#include <ros/ros.h>
-#include <std_msgs/ColorRGBA.h>
-#include <visualization_msgs/Marker.h>
-#include <visualization_msgs/MarkerArray.h>
-#include <geometry_msgs/Pose.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2/LinearMath/Matrix3x3.h>
 
-#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-#include <tf2/convert.h>
-#include <tf2/LinearMath/Transform.h>
 #include <string>
 
-namespace ros_viz_tools {
+namespace ros2_viz_tools {
 
-using visualization_msgs::Marker;
-using visualization_msgs::MarkerArray;
-using std_msgs::ColorRGBA;
+using visualization_msgs::msg::Marker;
+using visualization_msgs::msg::MarkerArray;
+using std_msgs::msg::ColorRGBA;
 
-class RosVizTools {
+class RosVizTools : public rclcpp::Node {
 public:
-    RosVizTools(const ros::NodeHandle &nh, const std::string &topic);
+    
+    // explicit RosVizTools(rclcpp::Node::SharedPtr node_handle, const std::string &topic);
+    explicit RosVizTools(const std::string &topic, rclcpp::NodeOptions node_options);
+    virtual ~RosVizTools(){};
 
     void publish();
 
@@ -32,8 +33,8 @@ public:
 
     void append(const Marker &marker);
 
-    static Marker newMaker(const geometry_msgs::Vector3 &scale,
-                           const geometry_msgs::Pose &pose,
+    static Marker newMaker(const geometry_msgs::msg::Vector3 &scale,
+                           const geometry_msgs::msg::Pose &pose,
                            const std::string &ns,
                            const int32_t &id,
                            const ColorRGBA &color,
@@ -45,6 +46,12 @@ public:
                               const int32_t &id,
                               const ColorRGBA &color,
                               const std::string &frame_id);
+
+    static Marker newCuboidList(const geometry_msgs::msg::Vector3 &scale,
+                                const std::string &ns,
+                                const int32_t &id,
+                                const ColorRGBA &color,
+                                const std::string &frame_id);
 
     static Marker newSphereList(const double &scale,
                                 const std::string &ns,
@@ -64,36 +71,43 @@ public:
                               const ColorRGBA &color,
                               const std::string &frame_id);
 
-    static Marker newCylinder(const geometry_msgs::Vector3 &scale,
-                              const geometry_msgs::Pose &pose,
+    static Marker newCylinder(const geometry_msgs::msg::Vector3 &scale,
+                              const geometry_msgs::msg::Pose &pose,
                               const std::string &ns,
                               const int32_t &id,
                               const ColorRGBA &color,
                               const std::string &frame_id);
 
     static Marker newCube(const double &scale,
-                          const geometry_msgs::Pose &pose,
+                          const geometry_msgs::msg::Pose &pose,
                           const std::string &ns,
                           const int32_t &id,
                           const ColorRGBA &color,
                           const std::string &frame_id);
 
-    static Marker newSphere(const double &scale,
-                            const geometry_msgs::Pose &pose,
+    static Marker newCuboid(const geometry_msgs::msg::Vector3& vec_scale,
+                            const geometry_msgs::msg::Pose &pose,
                             const std::string &ns,
                             const int32_t &id,
                             const ColorRGBA &color,
                             const std::string &frame_id);
 
-    static Marker newArrow(const geometry_msgs::Vector3 &scale,
-                           const geometry_msgs::Pose &pose,
+    static Marker newSphere(const double &scale,
+                            const geometry_msgs::msg::Pose &pose,
+                            const std::string &ns,
+                            const int32_t &id,
+                            const ColorRGBA &color,
+                            const std::string &frame_id);
+
+    static Marker newArrow(const geometry_msgs::msg::Vector3 &scale,
+                           const geometry_msgs::msg::Pose &pose,
                            const std::string &ns,
                            const int32_t &id,
                            const ColorRGBA &color,
                            const std::string &frame_id);
 
     static Marker newText(const double &scale,
-                          const geometry_msgs::Pose &pose,
+                          const geometry_msgs::msg::Pose &pose,
                           const std::string &ns,
                           const int32_t &id,
                           const ColorRGBA &color,
@@ -101,19 +115,20 @@ public:
 
     static Marker newFrame(const double &width,
                            const double &length,
-                           const geometry_msgs::Pose &pose,
+                           const geometry_msgs::msg::Pose &pose,
                            const std::string &ns,
                            const int32_t &id,
                            const std::string &frame_id);
 
-    static geometry_msgs::Pose defaultPose();
+    static geometry_msgs::msg::Pose defaultPose();
 
 private:
     void initPublisher();
 
 private:
-    ros::NodeHandle nh;
-    ros::Publisher rviz_pub;
+    // rclcpp::Node::SharedPtr node_handle_;
+    // std::shared_ptr<rclcpp::Node> node_handle_;
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr rviz_pub;
     std::string topic;
     MarkerArray rviz_marker_array;
 };

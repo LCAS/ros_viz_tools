@@ -1,50 +1,61 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(ros_viz_tools)
+cmake_minimum_required(VERSION 3.5)
+project(ros2_viz_tools)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 
-## Find catkin macros and libraries
-set(catkin_deps
-  geometry_msgs
-  roscpp
-  std_msgs
-  visualization_msgs
-  tf2
-)
+SET(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} ${GCC_COVERAGE_COMPILE_FLAGS} -fPIC")
 
-find_package(catkin REQUIRED COMPONENTS
-  ${catkin_deps}
-)
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic -fPIC)
+endif()
 
-catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS ${catkin_deps}
-)
+find_package(ament_cmake REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(visualization_msgs REQUIRED)
+find_package(std_msgs REQUIRED) 
+find_package(tf2_geometry_msgs REQUIRED)
 
-# include
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS}
+)
+
+set(DEPENDENCIES
+  "geometry_msgs"
+  "tf2"
+  "rclcpp"
+  "tf2_ros"
+  "visualization_msgs"
+  "std_msgs"
+  "tf2_geometry_msgs"
 )
 
 # library
-add_library(${PROJECT_NAME}
-  src/ros_viz_tools.cpp
-  src/color.cpp
+add_library(${PROJECT_NAME}_lib SHARED src/ros_viz_tools.cpp src/color.cpp)
+set_target_properties(${PROJECT_NAME}_lib PROPERTIES POSITION_INDEPENDENT_CODE ON)
+
+ament_target_dependencies(${PROJECT_NAME}_lib ${DEPENDENCIES})
+target_compile_definitions(${PROJECT_NAME}_lib PRIVATE "AMENT_INDEX_CPP_BUILDING_DLL")
+target_include_directories(${PROJECT_NAME}_lib PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
+
+ament_export_targets(export_${PROJECT_NAME}_lib HAS_LIBRARY_TARGET)
+install(DIRECTORY include/ DESTINATION include/${PROJECT_NAME})
+install(TARGETS ${PROJECT_NAME}_lib
+  EXPORT export_${PROJECT_NAME}_lib
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin)
+
+install(
+  DIRECTORY config launch images
+  DESTINATION share/${PROJECT_NAME}
 )
 
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
 
-# demo node
-add_executable(demo_node
-  src/demo_node.cpp
-)
-
-target_link_libraries(demo_node
-  ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
+ament_package()

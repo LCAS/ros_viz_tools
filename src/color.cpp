@@ -1,9 +1,8 @@
-// Copyright (C) 2019 Wei Wang (wei.wang.bit@outlook.com)
-
 #include "ros_viz_tools/color.h"
-namespace ros_viz_tools {
+namespace ros2_viz_tools {
+
 ColorRGBA newColorRGBA(uint8_t red, uint8_t green, uint8_t blue, double alpha) {
-    std_msgs::ColorRGBA color;
+    std_msgs::msg::ColorRGBA color;
     color.r = red / 255.0;
     color.g = green / 255.0;
     color.b = blue / 255.0;
@@ -12,7 +11,7 @@ ColorRGBA newColorRGBA(uint8_t red, uint8_t green, uint8_t blue, double alpha) {
 }
 
 ColorRGBA newColorRGBADouble(double red, double green, double blue, double alpha) {
-    std_msgs::ColorRGBA color;
+    std_msgs::msg::ColorRGBA color;
     color.r = red;
     color.g = green;
     color.b = blue;
